@@ -105,8 +105,8 @@ Before you begin, ensure you have the following installed:
 
 ```bash
 # 1️⃣ Clone the repository
-git clone https://github.com/yourusername/title-enhancer.git
-cd title-enhancer
+git clone https://github.com/surajit20107/ReTitle-AI
+cd ReTitle-AI
 
 # 2️⃣ Install dependencies
 npm install
@@ -143,17 +143,6 @@ yarn dev
 ### Basic Workflow
 
 <div align="center">
-
-```mermaid
-graph LR
-    A[Enter Title] --> B[Add Token]
-    B --> C[Click Enhance]
-    C --> D[Get AI Suggestions]
-    D --> E[Select Best Title]
-    style A fill:#FF6B6B
-    style C fill:#4ECDC4
-    style E fill:#45B7D1
-```
 
 </div>
 
