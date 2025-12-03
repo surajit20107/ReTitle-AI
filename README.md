@@ -1,7 +1,6 @@
-
 <div align="center">
 
-# 🎬 ReTitle
+# 🤖 ReTitle-AI
 
 <img src="https://img.shields.io/badge/AI--Powered-Title%20Optimization-FF6B6B?style=for-the-badge&logo=openai&logoColor=white" alt="AI Powered"/>
 
