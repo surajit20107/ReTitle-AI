@@ -1,46 +1,54 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Search, Sparkles, Youtube, ArrowRight, Loader2, CheckCircle2, AlertCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { VideoCard } from "@/components/video-card"
+import { useState } from "react";
+import {
+  Search,
+  Sparkles,
+  Youtube,
+  ArrowRight,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { VideoCard } from "@/components/video-card";
 
 interface Video {
-  id: string
-  title: string
-  thumbnail: string
-  publishedAt: string
-  viewCount: string
-  enhancedTitle?: string
-  reason?: string
-  isEnhancing?: boolean
+  id: string;
+  title: string;
+  thumbnail: string;
+  publishedAt: string;
+  viewCount: string;
+  enhancedTitle?: string;
+  reason?: string;
+  isEnhancing?: boolean;
 }
 
 interface ChannelInfo {
-  id: string
-  title: string
-  thumbnail: string
-  subscriberCount: string
-  videoCount: string
+  id: string;
+  title: string;
+  thumbnail: string;
+  subscriberCount: string;
+  videoCount: string;
 }
 
 export function TitleEnhancer() {
-  const youtubeApiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY as string
-  const puterAuthToken = process.env.NEXT_PUBLIC_PUTER_AUTH_TOKEN as string
-  
+  const youtubeApiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY as string;
+  const puterAuthToken = process.env.NEXT_PUBLIC_PUTER_AUTH_TOKEN as string;
+
   if (!youtubeApiKey && !puterAuthToken) {
-    console.warn("Missing YouTube API key or Puter auth token")
+    console.warn("Missing YouTube API key or Puter auth token");
   }
-  
-  const [channelUrl, setChannelUrl] = useState("")
+
+  const [channelUrl, setChannelUrl] = useState("");
   // const [youtubeApiKey, setYoutubeApiKe] = useState("")
   // const [puterAuthToken, setPuterAuthToken] = useState("")
-  const [channelInfo, setChannelInfo] = useState<ChannelInfo | null>(null)
-  const [videos, setVideos] = useState<Video[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [channelInfo, setChannelInfo] = useState<ChannelInfo | null>(null);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const extractChannelId = (url: string): string | null => {
     // Handle various YouTube URL formats
@@ -49,151 +57,165 @@ export function TitleEnhancer() {
       /youtube\.com\/@([a-zA-Z0-9_-]+)/,
       /youtube\.com\/c\/([a-zA-Z0-9_-]+)/,
       /youtube\.com\/user\/([a-zA-Z0-9_-]+)/,
-    ]
+    ];
 
     for (const pattern of patterns) {
-      const match = url.match(pattern)
-      if (match) return match[1]
+      const match = url.match(pattern);
+      if (match) return match[1];
     }
 
     // If it's just a channel ID or handle
     if (url.startsWith("@") || url.match(/^UC[a-zA-Z0-9_-]{22}$/)) {
-      return url
+      return url;
     }
 
-    return url.trim()
-  }
+    return url.trim();
+  };
 
   const fetchChannel = async () => {
     if (!channelUrl.trim()) {
-      setError("Please enter a YouTube channel URL or ID")
-      return
+      setError("Please enter a YouTube channel URL or ID");
+      return;
     }
 
     if (!youtubeApiKey?.trim()) {
-      setError("Please enter your YouTube API key")
-      return
+      setError("Please enter your YouTube API key");
+      return;
     }
 
-    setIsLoading(true)
-    setError("")
-    setChannelInfo(null)
-    setVideos([])
+    setIsLoading(true);
+    setError("");
+    setChannelInfo(null);
+    setVideos([]);
 
     try {
-      const channelIdentifier = extractChannelId(channelUrl)
+      const channelIdentifier = extractChannelId(channelUrl);
 
       // Determine if it's a channel ID or handle
-      let channelId = channelIdentifier
+      let channelId = channelIdentifier;
 
       if (channelIdentifier?.startsWith("@")) {
         // Search for the channel by handle
         const searchResponse = await fetch(
           `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(channelIdentifier)}&type=channel&key=${youtubeApiKey}`,
-        )
-        const searchData = await searchResponse.json()
+        );
+        const searchData = await searchResponse.json();
 
         if (searchData.error) {
-          throw new Error(searchData.error.message)
+          throw new Error(searchData.error.message);
         }
 
         if (searchData.items && searchData.items.length > 0) {
-          channelId = searchData.items[0].id.channelId
+          channelId = searchData.items[0].id.channelId;
         } else {
-          throw new Error("Channel not found")
+          throw new Error("Channel not found");
         }
       } else if (!channelIdentifier?.startsWith("UC")) {
         // Search for the channel by name
         const searchResponse = await fetch(
           `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(channelIdentifier || "")}&type=channel&key=${youtubeApiKey}`,
-        )
-        const searchData = await searchResponse.json()
+        );
+        const searchData = await searchResponse.json();
 
         if (searchData.error) {
-          throw new Error(searchData.error.message)
+          throw new Error(searchData.error.message);
         }
 
         if (searchData.items && searchData.items.length > 0) {
-          channelId = searchData.items[0].id.channelId
+          channelId = searchData.items[0].id.channelId;
         } else {
-          throw new Error("Channel not found")
+          throw new Error("Channel not found");
         }
       }
 
       // Fetch channel details
       const channelResponse = await fetch(
         `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${youtubeApiKey}`,
-      )
-      const channelData = await channelResponse.json()
+      );
+      const channelData = await channelResponse.json();
 
       if (channelData.error) {
-        throw new Error(channelData.error.message)
+        throw new Error(channelData.error.message);
       }
 
       if (!channelData.items || channelData.items.length === 0) {
-        throw new Error("Channel not found")
+        throw new Error("Channel not found");
       }
 
-      const channel = channelData.items[0]
+      const channel = channelData.items[0];
       setChannelInfo({
         id: channel.id,
         title: channel.snippet.title,
         thumbnail: channel.snippet.thumbnails.medium.url,
         subscriberCount: formatNumber(channel.statistics.subscriberCount),
         videoCount: formatNumber(channel.statistics.videoCount),
-      })
+      });
 
       // Fetch channel videos
       const videosResponse = await fetch(
         `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=date&type=video&maxResults=10&key=${youtubeApiKey}`,
-      )
-      const videosData = await videosResponse.json()
+      );
+      const videosData = await videosResponse.json();
 
       if (videosData.error) {
-        throw new Error(videosData.error.message)
+        throw new Error(videosData.error.message);
       }
 
       if (videosData.items && videosData.items.length > 0) {
-        const videoIds = videosData.items.map((item: { id: { videoId: string } }) => item.id.videoId).join(",")
+        const videoIds = videosData.items
+          .map((item: { id: { videoId: string } }) => item.id.videoId)
+          .join(",");
 
         // Fetch video statistics
         const statsResponse = await fetch(
           `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${youtubeApiKey}`,
-        )
-        const statsData = await statsResponse.json()
+        );
+        const statsData = await statsResponse.json();
 
         const videosWithStats = videosData.items.map(
           (
             item: {
-              id: { videoId: string }
-              snippet: { title: string; thumbnails: { medium: { url: string } }; publishedAt: string }
+              id: { videoId: string };
+              snippet: {
+                title: string;
+                thumbnails: { medium: { url: string } };
+                publishedAt: string;
+              };
             },
             index: number,
           ) => ({
             id: item.id.videoId,
             title: item.snippet.title,
             thumbnail: item.snippet.thumbnails.medium.url,
-            publishedAt: new Date(item.snippet.publishedAt).toLocaleDateString(),
-            viewCount: formatNumber(statsData.items?.[index]?.statistics?.viewCount || "0"),
+            publishedAt: new Date(
+              item.snippet.publishedAt,
+            ).toLocaleDateString(),
+            viewCount: formatNumber(
+              statsData.items?.[index]?.statistics?.viewCount || "0",
+            ),
           }),
-        )
+        );
 
-        setVideos(videosWithStats)
+        setVideos(videosWithStats);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch channel data")
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch channel data",
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const enhanceTitle = async (videoId: string, originalTitle: string) => {
     if (!puterAuthToken?.trim()) {
-      setError("Please enter your Puter auth token to enhance titles")
-      return
+      setError("Please enter your Puter auth token to enhance titles");
+      return;
     }
 
-    setVideos((prev) => prev.map((v) => (v.id === videoId ? { ...v, isEnhancing: true } : v)))
+    setVideos((prev) =>
+      prev.map((v) => (v.id === videoId ? { ...v, isEnhancing: true } : v)),
+    );
 
     try {
       const response = await fetch("https://api.puter.com/drivers/call", {
@@ -230,27 +252,27 @@ Respond in this exact JSON format:
             stream: false,
           },
         }),
-      })
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to enhance title")
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to enhance title");
       }
 
-      const data = await response.json()
-      const content = data.result?.message?.content || data.message?.content
+      const data = await response.json();
+      const content = data.result?.message?.content || data.message?.content;
 
       if (!content) {
-        throw new Error("No response from AI")
+        throw new Error("No response from AI");
       }
 
       // Parse the JSON response
-      const jsonMatch = content.match(/\{[\s\S]*\}/)
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
-        throw new Error("Invalid response format")
+        throw new Error("Invalid response format");
       }
 
-      const parsed = JSON.parse(jsonMatch[0])
+      const parsed = JSON.parse(jsonMatch[0]);
 
       setVideos((prev) =>
         prev.map((v) =>
@@ -263,67 +285,50 @@ Respond in this exact JSON format:
               }
             : v,
         ),
-      )
+      );
     } catch (err) {
-      console.error("Enhancement error:", err)
-      setVideos((prev) => prev.map((v) => (v.id === videoId ? { ...v, isEnhancing: false } : v)))
-      setError(err instanceof Error ? err.message : "Failed to enhance title")
+      console.error("Enhancement error:", err);
+      setVideos((prev) =>
+        prev.map((v) => (v.id === videoId ? { ...v, isEnhancing: false } : v)),
+      );
+      setError(err instanceof Error ? err.message : "Failed to enhance title");
     }
-  }
+  };
 
   const enhanceAllTitles = async () => {
     for (const video of videos) {
       if (!video.enhancedTitle) {
-        await enhanceTitle(video.id, video.title)
+        await enhanceTitle(video.id, video.title);
         // Small delay between requests to avoid rate limiting
-        await new Promise((resolve) => setTimeout(resolve, 500))
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     }
-  }
+  };
 
   const formatNumber = (num: string): string => {
-    const n = Number.parseInt(num)
-    if (n >= 1000000) return (n / 1000000).toFixed(1) + "M"
-    if (n >= 1000) return (n / 1000).toFixed(1) + "K"
-    return num
-  }
+    const n = Number.parseInt(num);
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
+    if (n >= 1000) return (n / 1000).toFixed(1) + "K";
+    return num;
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Header */}
       <div className="text-center mb-8 md:mb-12">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
-          <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
-            <Youtube className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+          <div className="flex justify-center items-center gap-2 p-3 rounded-xl bg-primary/10 border border-primary/20">
+            <Youtube className="h-10 w-10 sm:h-8 sm:w-8 text-primary" />
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+              ReTitle AI
+            </h1>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-            YouTube Title Enhancer
-          </h1>
         </div>
         <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
-          Boost your video click-through rates with AI-powered title optimization. Get engaging titles that attract more
-          viewers.
+          Boost your video click-through rates with AI-powered title
+          optimization. Get engaging titles that attract more viewers.
         </p>
       </div>
-
-      {/* API Keys Section - Commented out */}
-      {/* 
-      <Card className="mb-8 border-border bg-card">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            API Configuration
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Your API keys are stored locally and never sent to our servers.
-          </p>
-        </CardContent>
-      </Card>
-      */}
 
       {/* Search Section */}
       <Card className="mb-6 md:mb-8 border-border bg-card shadow-lg">
@@ -390,7 +395,9 @@ Respond in this exact JSON format:
               </div>
               <Button
                 onClick={enhanceAllTitles}
-                disabled={!puterAuthToken || videos.every((v) => v.enhancedTitle)}
+                disabled={
+                  !puterAuthToken || videos.every((v) => v.enhancedTitle)
+                }
                 className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto text-sm sm:text-base"
               >
                 <Sparkles className="h-4 w-4 mr-2" />
@@ -426,13 +433,16 @@ Respond in this exact JSON format:
         <Card className="border-dashed border-2 border-border bg-card/50">
           <CardContent className="py-12 sm:py-16 text-center px-4">
             <Youtube className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-base sm:text-lg font-medium text-foreground mb-2">No Channel Loaded</h3>
+            <h3 className="text-base sm:text-lg font-medium text-foreground mb-2">
+              No Channel Loaded
+            </h3>
             <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto">
-              Enter a YouTube channel URL above to fetch videos and enhance their titles with AI-powered suggestions.
+              Enter a YouTube channel URL above to fetch videos and enhance
+              their titles with AI-powered suggestions.
             </p>
           </CardContent>
         </Card>
       )}
     </div>
-  )
+  );
 }
