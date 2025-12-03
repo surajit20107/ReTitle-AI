@@ -31,7 +31,7 @@ export function TitleEnhancer() {
   const puterAuthToken = process.env.NEXT_PUBLIC_PUTER_AUTH_TOKEN as string
   
   if (!youtubeApiKey && !puterAuthToken) {
-    throw new Error("Missing YouTube API key or Puter auth token")
+    console.warn("Missing YouTube API key or Puter auth token")
   }
   
   const [channelUrl, setChannelUrl] = useState("")
