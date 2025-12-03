@@ -34,6 +34,10 @@
 
 ---
 
+Live Demo🚀 [Preview](https://retitle.vervel.app)
+
+---
+
 ## 🌟 Why ReTitle ?
 
 <table>
@@ -147,10 +151,9 @@ yarn dev
 </div>
 
 1. **📝 Enter your video title** in the input field
-2. **🔑 Add your authentication token** (if required)
-3. **✨ Click "Enhance Title"** to generate AI-powered suggestions
-4. **🎯 Select your favorite** enhanced title from the results
-5. **📊 Track performance** with built-in analytics
+2. **✨ Click "Enhance Title"** to generate AI-powered suggestions
+3. **🎯 Select your favorite** enhanced title from the results
+4. **📊 Track performance** with built-in analytics
 
 ### Advanced Features
 
@@ -355,11 +358,11 @@ Special thanks to these amazing projects and communities:
 
 ### Get in Touch
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/yourusername/title-enhancer)
-[![Twitter](https://img.shields.io/badge/Twitter-Follow-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/yourusername)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/surajit20107)
+[![Twitter](https://img.shields.io/badge/Twitter-Follow-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/surajit_20107)
 [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/yourinvite)
 
-**Project Link:** [https://github.com/yourusername/title-enhancer](https://github.com/surajit20107/ReTitle-AI)
+**Project Link:** [ReTitle-AI](https://github.com/surajit20107/ReTitle-AI)
 
 </div>
 
