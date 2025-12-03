@@ -1,7 +1,7 @@
 
 <div align="center">
 
-# 🎬 Title Enhancer
+# 🎬 ReTitle
 
 <img src="https://img.shields.io/badge/AI--Powered-Title%20Optimization-FF6B6B?style=for-the-badge&logo=openai&logoColor=white" alt="AI Powered"/>
 
@@ -34,7 +34,7 @@
 
 ---
 
-## 🌟 Why Title Enhancer?
+## 🌟 Why ReTitle ?
 
 <table>
 <tr>
@@ -359,7 +359,7 @@ Special thanks to these amazing projects and communities:
 [![Twitter](https://img.shields.io/badge/Twitter-Follow-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/yourusername)
 [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/yourinvite)
 
-**Project Link:** [https://github.com/yourusername/title-enhancer](https://github.com/yourusername/title-enhancer)
+**Project Link:** [https://github.com/yourusername/title-enhancer](https://github.com/surajit20107/ReTitle-AI)
 
 </div>
 
